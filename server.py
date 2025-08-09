@@ -5,13 +5,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from ultralytics import YOLO
 
 # -------- Config --------
-MODEL_DIR = os.environ.get("MODEL_DIR", "/app/models")
+# Use a writable directory on Render
+PROJECT_DIR = os.environ.get("PROJECT_DIR", os.getcwd())  # e.g. /opt/render/project/src
+MODEL_DIR = os.environ.get("MODEL_DIR", os.path.join(PROJECT_DIR, "models"))
 MODEL_PATH = os.environ.get("MODEL_PATH", os.path.join(MODEL_DIR, "best_v15m.pt"))
-GDRIVE_FILE_ID = os.environ.get("GDRIVE_FILE_ID")  # <-- set this in Render
+GDRIVE_FILE_ID = os.environ.get("GDRIVE_FILE_ID")  # <-- set in Render Env
 CONF = float(os.environ.get("CONF", 0.14))
 IOU = float(os.environ.get("IOU", 0.50))
 IMGSZ = int(os.environ.get("IMGSZ", 896))
 AUGMENT = os.environ.get("AUGMENT", "true").lower() == "true"
+
 
 # -------- Ensure model on disk (download from Drive if missing) --------
 os.makedirs(MODEL_DIR, exist_ok=True)
